@@ -1,0 +1,39 @@
+spring:
+  aop:
+    proxy-target-class: true
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    listener:
+      type: batch
+      ack-mode: manual_immediate
+      missing-topics-fatal: false
+      concurrency: ${KAFKA_CONCURRENCY}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    topic:
+      replication-factor: ${KAFKA_REPLICATION_FACTOR}
+      num-partitions: ${KAFKA_NUM_PARTITIONS}
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #      value-deserializer: org.apache.kafka.common.serialization.JsonDeserializer
+      properties:
+        request:
+          timeout:
+            ms: 120000
+        schema.registry.url: ${SCHEMA_REGISTRY_URL}
+        specific.avro.reader: true
+      max-poll-records: ${KAFKA_MAX_POLL_RECORDS:200}
+      fetch-max-wait: ${KAFKA_FETCH_MAX_WAIT:5000}
+      fetch-min-size: ${KAFKA_FETCH_MIN_SIZE:60000} #khoang 200 message
+      group-id: "tracking_consumer"
+      isolation-level: read_committed
+
+server:
+  port: ${PORT}
+
+logging:
+  level:
+    org.springframework.web: ${LOG_LEVEL}
+    com.example: ${LOG_LEVEL}
